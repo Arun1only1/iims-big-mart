@@ -72,6 +72,30 @@ app.delete("/product/delete/:id", async (req, res) => {
   return res.status(200).send({ message: "Product is deleted successfully." });
 });
 
+// get product details
+app.get("/product/detail/:id", async (req, res) => {
+  // extract product id from req.params
+  const productId = req.params.id;
+
+  // check mongo id validity
+  const isValidProductId = mongoose.isValidObjectId(productId);
+
+  // if not valid product id, throw error
+  if (!isValidProductId) {
+    return res.status(400).send({ message: "Invalid product id." });
+  }
+
+  // find product using product id
+  const product = await Product.findOne({ _id: productId });
+
+  // if not product, throw error
+  if (!product) {
+    return res.status(404).send({ message: "Product does not exist." });
+  }
+
+  return res.status(200).send({ message: "success", productDetails: product });
+});
+
 // network port
 const PORT = 8000;
 
